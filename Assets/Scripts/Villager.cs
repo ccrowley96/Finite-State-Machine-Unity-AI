@@ -1,11 +1,62 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/***
+ * 
+ * CISC 486 Assignment 2 sample code. Copyright (C) Nicholas Graham.
+ * 
+ * This example code is provided to show how to interact with the animation controller
+ * and how to move the avatar. This code should be replaced with your own FSM controller
+ * code.
+ * 
+ */
+
 public class Villager : MonoBehaviour {
 
-	public int maxFruitCarried = 2;
-	public int numFruitCarried = 0;
+	public float speed = 5.0f;
+	public float pickingDistance = 5.0f;
 
-	// Villager's home position in the village
-	public GameObject home = null;
+	Animator _anim;
+	
+	// Triggers used to change state
+	private int walkHash = Animator.StringToHash ("Walk");
+	private int idleHash = Animator.StringToHash ("Idle");
+	private int dropHash = Animator.StringToHash ("Drop");
+	private int pickHash = Animator.StringToHash ("Pickup");
+
+	// Names of animation states
+	private int idleStateHash = Animator.StringToHash ("idle");
+	private int walkingStateHash = Animator.StringToHash ("walking");
+	private int dropStateHash = Animator.StringToHash ("dropping");
+	private int pickupStateHash = Animator.StringToHash ("pickingFruit");
+
+
+	bool atTree = false;
+	public GameObject target = null;
+
+	// Use this for initialization
+	void Start () {
+		_anim = GetComponent<Animator>();
+		transform.LookAt(target.transform.position);
+		_anim.SetTrigger(walkHash);
+	}
+
+
+
+	// Update is called once per frame
+	void Update () {
+		if((transform.position-target.transform.position).magnitude <= pickingDistance && !atTree) {
+			atTree = true;
+			_anim.SetTrigger(pickHash);
+		} else if(atTree) {
+			// do nothing
+		} else {
+			transform.position += transform.forward * speed * Time.deltaTime;
+			transform.position =
+				new Vector3(
+					transform.position.x,
+					Terrain.activeTerrain.SampleHeight(transform.position),
+			    	transform.position.z);
+		}
+	}
 }
