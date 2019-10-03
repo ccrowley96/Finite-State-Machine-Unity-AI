@@ -9,18 +9,13 @@ public class FSMController : FSM {
     public int numberApplesOnTrees = 3;
     public void Start() {
         _anim = GetComponent<Animator>();
-        FSMNode._anim = _anim;
-        FSMNode.controller = this;
+
         currentNode = gameObject.AddComponent(typeof(Walking)) as Walking;
-        ((Walking) currentNode).target = GameObject.Find("Trees").transform.GetChild(0).gameObject;
+        currentNode.controller = this;
         initTrees();
+        ((Walking) currentNode).target = selectRandomTree();
     }
-
-    public override void Update() {
-        if(currentNode)
-            currentNode = currentNode.doActivity();
-    }
-
+    
     public void initTrees(){
         GameObject trees = GameObject.Find("Trees");
         foreach(Transform child in trees.transform){
@@ -49,7 +44,7 @@ public class FSMController : FSM {
         numAdded = addApple(numApples);
         treeAppleMap[key] -= numAdded;
 
-        Debug.Log("Tree: "+ key + ", Backpack: " + appleBackpack + ", leftOnTree: " + treeAppleMap[key]);
+        Debug.Log("Player: "+ gameObject.name +", Tree: "+ key + ", Backpack: " + appleBackpack + ", leftOnTree: " + treeAppleMap[key]);
 
         //if tree empty, remove from treeMap & treeList
         if(treeAppleMap[key] == 0){

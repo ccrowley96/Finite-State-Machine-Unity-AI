@@ -4,4 +4,6 @@ public static class Utils{
         village,
         newTree
     }
+
+    public enum priority {low, high};
 }

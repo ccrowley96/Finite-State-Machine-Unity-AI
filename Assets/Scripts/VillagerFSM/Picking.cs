@@ -12,14 +12,15 @@ public class Picking : FSMNode {
         // On animation completion, select next node
         if(_anim.GetCurrentAnimatorStateInfo(0).IsName("idle")){
              Utils.pickingStates ps = controller.pickTree(pickTarget);
+
+            Walking walkNode = gameObject.AddComponent(typeof(Walking)) as Walking;
+            walkNode.controller = this.controller;
             //animation finished
             if(ps == Utils.pickingStates.newTree){ // walk to random tree
-                Walking walkNode = gameObject.AddComponent(typeof(Walking)) as Walking;
                 walkNode.target = controller.selectRandomTree();
                 exit();
                 return walkNode;
             } else{ // walk to village for drop off
-                Walking walkNode = gameObject.AddComponent(typeof(Walking)) as Walking;
                 walkNode.target = controller.selectVillage();
                 exit();
                 return walkNode;

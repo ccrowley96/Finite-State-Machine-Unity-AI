@@ -2,22 +2,30 @@ using UnityEngine;
 
 public class Walking : FSMNode {
 
-    public float speed = 20.0f;
+    public float speed = 5.0f;
 	public float pickingDistance = 5.0f;
     public float droppingDistance = 12.0f;
 
     private int walkHash = Animator.StringToHash("Walk");
+    private float localTimeDelta;
+    private float lastTimeStamp;
     bool atDest = false;
 	public GameObject target = null;
 
     public override void entry(){
+        localTimeDelta = 0.0f;
+        lastTimeStamp = Time.time;
         if(target == null) return;
         _anim.SetTrigger(walkHash);
     }
     public override FSMNode doActivity(){
+        localTimeDelta = Time.time - lastTimeStamp;
+        lastTimeStamp = Time.time;
         if(target == null){
+            Idle idle = gameObject.AddComponent(typeof(Idle)) as Idle;
+            idle.controller = this.controller;
             exit();
-            return gameObject.AddComponent(typeof(Idle)) as Idle;
+            return idle;
         }
 
         float distanceThresh = target.tag == "fruitTree" ? pickingDistance : droppingDistance;
@@ -28,17 +36,20 @@ public class Walking : FSMNode {
             // Check if @ tree 
             if(target.tag == "fruitTree"){
                 Picking pickNode = gameObject.AddComponent(typeof(Picking)) as Picking;
+                pickNode.controller = this.controller;
                 pickNode.pickTarget = target;
                 exit();
                 return pickNode;
             } else{ // else village
                 Dropping dropNode = gameObject.AddComponent(typeof(Dropping)) as Dropping;
+                dropNode.controller = this.controller;
                 exit();
                 return dropNode;
             }
 		} else {
             transform.LookAt(target.transform.position);
-			transform.position += transform.forward * speed * Time.deltaTime;
+            transform.position += transform.forward * speed * localTimeDelta;
+            Debug.Log(Time.deltaTime);
 			transform.position =
 				new Vector3(
 					transform.position.x,

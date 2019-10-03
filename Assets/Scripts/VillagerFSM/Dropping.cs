@@ -13,6 +13,7 @@ public class Dropping : FSMNode {
         // On animation completion, select next node
         if(_anim.GetCurrentAnimatorStateInfo(0).IsName("idle")){
             Walking walkNode = gameObject.AddComponent(typeof(Walking)) as Walking;
+            walkNode.controller = this.controller;
             walkNode.target = controller.selectRandomTree();
             exit();
             return walkNode;
