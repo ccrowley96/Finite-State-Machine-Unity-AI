@@ -15,17 +15,21 @@ public class Walking : FSMNode {
     public override void entry(){
         localTimeDelta = 0.0f;
         lastTimeStamp = Time.time;
-        if(target == null) return;
+        // if(target == null) return;
         _anim.SetTrigger(walkHash);
     }
     public override FSMNode doActivity(){
         localTimeDelta = Time.time - lastTimeStamp;
         lastTimeStamp = Time.time;
         if(target == null){
-            Idle idle = gameObject.AddComponent(typeof(Idle)) as Idle;
-            idle.controller = this.controller;
-            exit();
-            return idle;
+            if(controller.appleBackpack > 0)
+                target = controller.selectVillage();
+            else{
+                Idle idle = gameObject.AddComponent(typeof(Idle)) as Idle;
+                idle.controller = this.controller;
+                exit();
+                return idle;
+            }
         }
 
         float distanceThresh = target.tag == "fruitTree" ? pickingDistance : droppingDistance;
@@ -49,7 +53,6 @@ public class Walking : FSMNode {
 		} else {
             transform.LookAt(target.transform.position);
             transform.position += transform.forward * speed * localTimeDelta;
-            Debug.Log(Time.deltaTime);
 			transform.position =
 				new Vector3(
 					transform.position.x,

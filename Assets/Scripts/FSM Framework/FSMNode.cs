@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 
 public abstract class FSMNode: MonoBehaviour{
-    public FSMController controller;
+    public VillagerFSM controller;
     public Animator _anim{
         get {
             return controller._anim;

@@ -11,7 +11,7 @@ public class Picking : FSMNode {
        
         // On animation completion, select next node
         if(_anim.GetCurrentAnimatorStateInfo(0).IsName("idle")){
-             Utils.pickingStates ps = controller.pickTree(pickTarget);
+            Utils.pickingStates ps = controller.pickTree(pickTarget);
 
             Walking walkNode = gameObject.AddComponent(typeof(Walking)) as Walking;
             walkNode.controller = this.controller;
